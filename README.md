@@ -9,10 +9,11 @@ Custom theme maintainers (or the adventurous) can add support for this in severa
 	//REGULAR THEME COLOR VARIABLES
 }
 :root .rm-dark-theme {
-	//DARK MODE THEME VARIABLES
+	//DARK MODE COLOR THEME VARIABLES
 }
 ```
 
 ## Example 
 Here is an example integrating the toggle into a pre-existing theme
-  <img src="https://github.com/8bitgentleman/roam-depot-dark-toggle/raw/main/example.gif" width="400"></img>
+
+<img src="https://raw.githubusercontent.com/8bitgentleman/roam-depo-dark-toggle/main/example.gif" width="800"></img>
