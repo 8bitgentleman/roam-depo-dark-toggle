@@ -93,7 +93,7 @@ function destroyToggle(){
     document.body.classList.remove("rm-dark-theme")
     // remove all parts of the button
     const toggles = document.querySelectorAll('.dm-toggle');
-    console.log(toggles)
+
     toggles.forEach(tog => {
         tog.remove();
     });
@@ -102,7 +102,7 @@ function destroyToggle(){
 
 function onload({extensionAPI}) {
   console.log("load dark mode toggle plugin")
-  // make extension accessible
+  // make extensionAPI accessible 
   internals.extensionAPI = extensionAPI;
 
   extensionAPI.settings.panel.create(panelConfig);
