@@ -1,10 +1,30 @@
 /* Original code by matt vogel */
-  /* Source: https://github.com/8bitgentleman/roam-depo-dark-toggle  */
-  /* v2  */
-  // THIS EXTENSION DOES VERY LITTLE ON ITS OWN
-  // adds a button to the topbar to allow toggling of custom CSS modes 
-  // it works by adding and removing the css class `.rm-dark-theme` from the document body
-  // custom themes 
+/* Source: https://github.com/8bitgentleman/roam-depo-dark-toggle  */
+/* v2  */
+// THIS EXTENSION DOES VERY LITTLE ON ITS OWN
+// adds a button to the topbar to allow toggling of custom CSS modes 
+// it works by adding and removing the css class `.rm-dark-theme` from the document body
+// custom themes 
+
+let internals = {};
+
+internals.extensionAPI = null;
+
+internals.settingsDefault = {
+    'dark-mode': false,
+    'add-simple-theme': false
+};
+
+const panelConfig = {
+  tabTitle: "Dark Mode Toggle",
+  settings: [
+      {id:		  "add-simple-theme",
+        name:		"Add Simple Dark Theme CSS",
+        description: "Adds the CSS for a simple dark mode theme to the [[roam/css]] page",
+        action:	  {type:	 "switch",
+                      onChange: (evt) => { console.log("Switch!", evt.target.checked); }}}
+  ]
+};
 
 function toggleDarkMode() {    
     if (document.body.classList.contains("rm-dark-theme")){
@@ -12,14 +32,22 @@ function toggleDarkMode() {
         let lbtn = document.getElementsByClassName('bp3-icon-flash')[0];
         lbtn.classList.remove('bp3-icon-flash');
         lbtn.classList.add('bp3-icon-moon');
-        document.body.classList.toggle("rm-dark-theme")
+        document.body.classList.toggle("rm-dark-theme");
+        // switching to document.html to support a simple dark theme
+        // keeping the old .body class for backwards compatibility 
+        let root = document.getElementsByTagName( 'html' )[0];
+        root.classList.toggle("rm-dark-theme");
+        
     } else {
         // switch to dark mode
         let btn = document.getElementsByClassName('bp3-icon-moon')[0];
         btn.classList.remove('bp3-icon-moon');
         btn.classList.add('bp3-icon-flash');
-        document.body.classList.toggle("rm-dark-theme")
-        
+        document.body.classList.toggle("rm-dark-theme");
+        // switching to document.html to support a simple dark theme
+        // keeping the old .body class for backwards compatibility 
+        let root = document.getElementsByTagName( 'html' )[0];
+        root.classList.toggle("rm-dark-theme");
     }
 }
 
@@ -70,16 +98,23 @@ function destroyToggle(){
         tog.remove();
     });
 }
-    
 
 
+function onload({extensionAPI}) {
+  console.log("load dark mode toggle plugin")
+  // make extension accessible
+  internals.extensionAPI = extensionAPI;
+
+  extensionAPI.settings.panel.create(panelConfig);
+
+  createToggle()
+}
+
+function onunload(){
+  console.log("unload dark mode toggle plugin")
+  destroyToggle()
+}
 export default {
-  onload: () => {
-    console.log("load dark mode toggle plugin")
-    createToggle()
-  },
-  onunload: () => {
-    console.log("unload dark mode toggle plugin")
-    destroyToggle()
-  }
+  onload,
+  onunload
 };
