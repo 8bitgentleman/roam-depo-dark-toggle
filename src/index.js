@@ -4,18 +4,9 @@
 // THIS EXTENSION DOES VERY LITTLE ON ITS OWN
 // adds a button to the topbar to allow toggling of custom CSS modes 
 // it works by adding and removing the css class `.rm-dark-theme` from the document body
-// custom themes 
-// 0SiJ-RnlK
+// there is also an option to add a simple inverted dark theme
+
 import toggleSimpleCSS from './simple_theme'
-
-let internals = {};
-
-internals.extensionAPI = null;
-
-internals.settingsDefault = {
-    'dark-mode': false,
-    'add-simple-theme': false
-};
 
 const panelConfig = {
   tabTitle: "Dark Mode Toggle",
@@ -107,7 +98,6 @@ function destroyToggle(){
 function onload({extensionAPI}) {
   console.log("load dark mode toggle plugin")
   // make extensionAPI accessible 
-  internals.extensionAPI = extensionAPI;
 
   extensionAPI.settings.panel.create(panelConfig);
 
@@ -116,8 +106,9 @@ function onload({extensionAPI}) {
 }
 
 function onunload(){
-  console.log("unload dark mode toggle plugin")
   destroyToggle()
+  toggleSimpleCSS(false)
+  console.log("unload dark mode toggle plugin")
 }
 export default {
   onload,
