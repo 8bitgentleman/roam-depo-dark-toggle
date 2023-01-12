@@ -84,11 +84,11 @@ function createCodeBlock(pageUID, parentUID, blockUID){
             background-color:white !important;
             color:black !important;
         }
-        .rm-extensions-marketplace .rm-extension-small:hover{
+        .rm-dark-theme .rm-extensions-marketplace .rm-extension-small:hover{
             color:white !important;
           }
-        .codemirror-colorview{
-        filter: invert(100%) !important;
+        .rm-dark-theme codemirror-colorview{
+            filter: invert(100%) !important;
         }
     `;
 
