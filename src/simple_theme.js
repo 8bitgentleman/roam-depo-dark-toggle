@@ -1,3 +1,12 @@
+/* Original code by matt vogel */
+/* Source: https://github.com/8bitgentleman/roam-depo-dark-toggle  */
+/* v2  */
+// THIS EXTENSION DOES VERY LITTLE ON ITS OWN
+// adds a button to the topbar to allow toggling of custom CSS modes 
+// it works by adding and removing the css class `.rm-dark-theme` from the document body
+// there is also an option to add a simple inverted dark theme
+// custom themes 
+
 function uidForToday() {
     let roamDate = new Date(Date.now());
     let today = window.roamAlphaAPI.util.dateToPageTitle(roamDate);
@@ -37,12 +46,13 @@ function createCodeBlock(pageUID, parentUID, blockUID){
             "heading":3}})
     
     // create codeblock for a simple dark theme
+    // I do this so that a user can see and modify the CSS
     let css = `
         :root{
-            //REGULAR THEME COLOR VARIABLES
+            /*REGULAR THEME COLOR VARIABLES*/
         }
         :root .rm-dark-theme {
-            //DARK MODE COLOR THEME VARIABLES
+            /*DARK MODE COLOR THEME VARIABLES*/
             --background:#000;
             --text:#fff;
         }
@@ -54,7 +64,7 @@ function createCodeBlock(pageUID, parentUID, blockUID){
         
         }
         .rm-dark-theme .roam-sidebar-container{
-            background-color: var(--background) !important;
+            background-color: var(--text) !important;
             transition: .8s background-color ease;
         }
         .rm-dark-theme img {
@@ -73,6 +83,12 @@ function createCodeBlock(pageUID, parentUID, blockUID){
         .rm-dark-theme .rm-settings--desktop .rm-settings__tab:not(.rm-settings__panel-wrapper){
             background-color:white !important;
             color:black !important;
+        }
+        .rm-extensions-marketplace .rm-extension-small:hover{
+            color:white !important;
+          }
+        .codemirror-colorview{
+        filter: invert(100%) !important;
         }
     `;
 
