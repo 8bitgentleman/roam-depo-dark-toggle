@@ -38,7 +38,7 @@ function createCodeBlock(pageUID, parentUID, blockUID){
     .createBlock(
         {"location": 
             {"parent-uid": pageUID, 
-            "order": 0}, 
+            "order": "last"}, 
         "block": 
             {"string": `SIMPLE CSS DARK THEME [[${uidForToday()}]]`,
             "uid":parentUID,
