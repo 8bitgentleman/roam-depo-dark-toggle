@@ -1,0 +1,168 @@
+- {{[[table]]}}
+    1. **Namespace**
+        - **Attrubute**
+            - **:Namespace/Attribute**
+                - **Purpose**
+    2. block
+        - string
+            - :block/string
+                - Pure text of the block
+    3. block
+        - uid
+            - :block/uid
+                - 9-digit (typically) unique block identifier (different from :db/id ). Uses nanoid under the hood
+    4. block
+        - open
+            - :block/open
+                - true/false
+    5. block
+        - heading
+            - :block/heading
+                - H heading for the block. Default is none but could also be 0, 1, 2, or 3
+    6. block
+        - order
+            - :block/order
+                - Order underneath the direct block parent
+    7. block
+        - view-type
+            - :block/view-type
+    8. block
+        - text-align
+            - :block/text-align
+    9. block
+        - refs
+            - :block/refs
+    10. block
+        - props
+            - :block/props
+    11. block
+        - page
+            - :block/page
+    12. block
+        - parents
+            - :block/parents
+    13. block
+        - children
+            - :block/children
+    14. children
+        - view-type
+            - :children/view-type
+    15. node
+        - title
+            - :node/title
+    16. node
+        - text
+            - :node/text
+                -  `:document` blocks but not the contents
+    17. node
+        - pm
+            - :node/pm
+                - contents of `:document` blocks
+    18. create
+        - email
+            - :create/email
+    19. create
+        - user
+            - :create/user
+    20. create
+        - time
+            - :create/time
+    21. edit
+        - time
+            - :edit/time
+    22. edit
+        - seen-by
+            - :edit/seen-by
+    23. edit
+        - user
+            - :edit/user
+    24. last-used
+        - time
+            - :last-used/time
+    25. diagram
+        - edges
+            - ## :diagram/edges
+    26. diagram
+        - nodes
+            - ## :diagram/nodes
+    27. diagram.edge
+        - data
+            - ## :diagram.edge/data
+    28. diagram.edge
+        - source
+            - ## :diagram.edge/source
+    29. diagram.edge
+        - target
+            - ## :diagram.edge/target
+    30. diagram.node
+        - block
+            - ## :diagram.node/block
+    31. diagram.node
+        - data
+            - ## :diagram.node/data
+    32. diagram.node
+        - parent-node
+            - ## :diagram.node/parent-node
+    33. restrictions
+        - prevent-clean
+            - ## :restrictions/prevent-clean
+    34. user
+        - settings
+            - :user/settings
+    35. user
+        - photo-url
+            - :user/photo-url
+    36. user
+        - color
+            - :user/color
+    37. user
+        - email
+            - :user/email
+    38. user
+        - uid
+            - :user/uid
+    39. user
+        - display-page
+            - :user/display-page
+    40. user
+        - display-name
+            - :user/display-name
+    41. ent
+        - emojis
+            - :ent/emojis
+    42. entity
+        - attrs
+            - :entity/attrs
+    43. attrs
+        - lookup
+            - :attrs/lookup
+    44. graph
+        - name
+            - :graph/name
+    45. graph
+        - settings
+            - :graph/settings
+    46. page
+        - sidebar
+            - :page/sidebar
+    47. window
+        - id
+            - :window/id
+    48. window
+        - filters
+            - :window/filters
+    49. vc
+        - blocks
+            - :vc/blocks
+    50. version
+        - upgraded-nonce
+            - :version/upgraded-nonce
+    51. version
+        - nonce
+            - :version/nonce
+    52. version
+        - id
+            - :version/id
+    53. log
+        - id
+            - :log/id
