@@ -1,6 +1,6 @@
 {
   "name": "roam-depot-dark-toggle",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Roam Research Plugin to toggle CSS themes",
   "main": "index.js",
   "scripts": {
