@@ -1,5 +1,22 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [v2.1.0]() (2025-11-21)
+
+### Features
+* **3-State Toggle**: New cycling toggle between Light, Dark, and Auto modes
+* **Auto Mode**: Follows system dark mode preference in real-time
+* **Direct Mode Commands**: Command palette now includes direct access to each mode
+* **Legacy Migration**: Automatically migrates settings from v2.0.0
+
+### Enhancements
+* **Simplified Settings**: Removed separate "Follow System Preference" toggle (now built into 3-state cycle)
+* **Better Icons**: Each mode has a distinct icon (moon, flash, automatic-updates)
+* **Improved UX**: Single button cycles through all modes intuitively
+
+### Refactors
+* Restructured state management around mode concept instead of boolean
+* Cleaner separation between theme application and mode management
+
 ## [v2.0.0]() (2025-11-20)
 
 ### Features
