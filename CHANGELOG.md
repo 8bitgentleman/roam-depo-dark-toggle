@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 * **Simple theme CSS no longer deleted**: disabling, updating or reloading the extension used to delete the "SIMPLE CSS DARK THEME" block from `[[roam/css]]` (including any edits) while the setting stayed on. The block is now left alone; only turning off "Add Simple Dark Theme CSS" removes it.
 * **One-time restore**: if the setting is on but the block is missing after updating, the stock CSS is added back once per device. Turn the setting off if you no longer want it.
+* **Fresh installs no longer start in dark mode**: the "not yet set" check missed Roam's `null` for unsaved settings, so new installs switched dark mode on (with the "off" icon showing) on every load until toggled. Users still in that state are reset to light mode once.
 
 ## [v2.0.0]() (2025-11-20)
 

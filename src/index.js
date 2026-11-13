@@ -137,7 +137,7 @@ function onload({extensionAPI: api, extension}) {
   extensionAPI.settings.panel.create(panelConfig);
 
   // Initialize darkMode setting with default value if it doesn't exist
-  if (extensionAPI.settings.get('darkMode') === undefined) {
+  if (extensionAPI.settings.get('darkMode') == null) {
     extensionAPI.settings.set('darkMode', false);
   }
 
