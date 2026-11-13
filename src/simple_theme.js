@@ -29,39 +29,57 @@ function getPageUidByPageTitle(title){
     }
 }
 
-function createPage(title){
+async function createPage(title){
+    // creates the roam/css page if it does not exist
+    const pageUID = roamAlphaAPI.util.generateUID();
     try {
-        // creates the roam/css page if it does not exist
-        let pageUID = roamAlphaAPI.util.generateUID();
-        roamAlphaAPI.data
+        await roamAlphaAPI.data
             .page.create(
                 {"page":
                     {"title": title,
                     "uid": pageUID}});
         return pageUID;
     } catch (error) {
-        console.error("Dark Mode Toggle: Error creating page:", error);
-        return null;
+        // the page may have been created concurrently, so re-check by title
+        const existing = getPageUidByPageTitle(title);
+        if (!existing) {
+            console.error("Dark Mode Toggle: Error creating page:", error);
+        }
+        return existing;
     }
 }
 
-function createCodeBlock(pageUID, parentUID, blockUID){
-    try {
-        // creates the initial code block and its parent
-        // adding this to the roam/css page so users can use it as an example
-        // create closed parent block
-        const today = uidForToday();
-        roamAlphaAPI
-        .createBlock(
-            {"location":
-                {"parent-uid": pageUID,
-                "order": "last"},
-            "block":
-                {"string": `SIMPLE CSS DARK THEME [[${today}]]`,
-                "uid":parentUID,
-                "open":false,
-                "heading":3}});
+function blockExists(uid){
+    const res = roamAlphaAPI.q(
+        `[:find ?e :where [?e :block/uid "${uid}"]]`
+    );
+    return !!res && res.length > 0;
+}
 
+function childCount(uid){
+    const n = roamAlphaAPI.q(
+        `[:find (count ?c) . :where [?p :block/uid "${uid}"] [?p :block/children ?c]]`
+    );
+    return n || 0;
+}
+
+async function createParentBlock(pageUID, parentUID){
+    // creates the closed parent block of the simple theme
+    // adding this to the roam/css page so users can use it as an example
+    const today = uidForToday();
+    await roamAlphaAPI
+    .createBlock(
+        {"location":
+            {"parent-uid": pageUID,
+            "order": "last"},
+        "block":
+            {"string": `SIMPLE CSS DARK THEME [[${today}]]`,
+            "uid":parentUID,
+            "open":false,
+            "heading":3}});
+}
+
+async function createChildBlock(parentUID, blockUID){
         // create codeblock for a simple dark theme
         // I do this so that a user can see and modify the CSS
         let css = `
@@ -110,7 +128,7 @@ function createCodeBlock(pageUID, parentUID, blockUID){
     `;
 
         let blockString = "```css\n " + css + " ```";
-        roamAlphaAPI
+        await roamAlphaAPI
         .createBlock(
             {"location":
                 {"parent-uid": parentUID,
@@ -118,9 +136,6 @@ function createCodeBlock(pageUID, parentUID, blockUID){
             "block":
                 {"uid": blockUID,
                 "string": blockString}});
-    } catch (error) {
-        console.error("Dark Mode Toggle: Error creating code block:", error);
-    }
 }
 
 function removeCodeBlock(uid){
@@ -131,35 +146,62 @@ function removeCodeBlock(uid){
     }
 }
 
+// Using fixed UIDs allows users to easily find and modify the CSS block
+// This is intentional for user convenience
+const codeBlockParentUID = 'dark-theme-css-parent';
+const codeBlockUID = 'dark-theme-css';
+
+let ensureInFlight = null;
+
+async function ensure(){
+    try {
+        const parentExists = blockExists(codeBlockParentUID);
+        const childExists = blockExists(codeBlockUID);
+
+        if (parentExists) {
+            if (childExists || childCount(codeBlockParentUID) >= 1) {
+                return {present: true, created: false};
+            }
+            await createChildBlock(codeBlockParentUID, codeBlockUID);
+            return {present: true, created: true};
+        }
+        if (childExists) {
+            return {present: true, created: false};
+        }
+
+        const cssPageName = 'roam/css';
+        let pageUID = getPageUidByPageTitle(cssPageName);
+        if (!pageUID) {
+            pageUID = await createPage(cssPageName);
+        }
+        if (!pageUID) {
+            throw new Error("Could not create or find roam/css page");
+        }
+        await createParentBlock(pageUID, codeBlockParentUID);
+        await createChildBlock(codeBlockParentUID, codeBlockUID);
+        return {present: true, created: true};
+    } catch (error) {
+        try {
+            if (blockExists(codeBlockParentUID) || blockExists(codeBlockUID)) {
+                return {present: true, created: false};
+            }
+        } catch (_) { /* fall through */ }
+        console.error("Dark Mode Toggle: Error ensuring simple CSS:", error);
+        return {present: false, created: false};
+    }
+}
+
+export function ensureSimpleCSS(){
+    if (!ensureInFlight) {
+        ensureInFlight = ensure().finally(() => { ensureInFlight = null; });
+    }
+    return ensureInFlight;
+}
+
 export default function toggleSimpleCSS(state) {
     try {
-        // Using fixed UIDs allows users to easily find and modify the CSS block
-        // This is intentional for user convenience
-        let codeBlockParentUID = 'dark-theme-css-parent';
-        let codeBlockUID = 'dark-theme-css';
-
         if (state === true) {
-            let cssPageName = 'roam/css';
-            // if roam/css page doesn't exist then create it
-            let pageUID = getPageUidByPageTitle(cssPageName);
-            if (!pageUID) {
-                pageUID = createPage(cssPageName);
-            }
-
-            if (pageUID) {
-                // Check if block already exists before creating
-                const existingBlock = roamAlphaAPI.q(
-                    `[:find (pull ?e [:block/uid]) :where [?e :block/uid "${codeBlockParentUID}"]]`
-                );
-
-                if (!existingBlock || existingBlock.length === 0) {
-                    createCodeBlock(pageUID, codeBlockParentUID, codeBlockUID);
-                } else {
-                    console.log("Dark Mode Toggle: CSS block already exists, skipping creation");
-                }
-            } else {
-                console.error("Dark Mode Toggle: Could not create or find roam/css page");
-            }
+            return ensureSimpleCSS();
         } else if(state === false){
             removeCodeBlock(codeBlockParentUID);
         }

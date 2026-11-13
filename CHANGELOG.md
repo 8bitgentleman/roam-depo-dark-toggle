@@ -1,5 +1,11 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [v2.0.1]() (2026-11-13)
+
+### Bug Fixes
+* **Simple theme CSS no longer deleted**: disabling, updating or reloading the extension used to delete the "SIMPLE CSS DARK THEME" block from `[[roam/css]]` (including any edits) while the setting stayed on. The block is now left alone; only turning off "Add Simple Dark Theme CSS" removes it.
+* **One-time restore**: if the setting is on but the block is missing after updating, the stock CSS is added back once per device. Turn the setting off if you no longer want it.
+
 ## [v2.0.0]() (2025-11-20)
 
 ### Features

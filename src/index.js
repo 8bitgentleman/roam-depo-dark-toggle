@@ -6,10 +6,16 @@
 // it works by adding and removing the css class `.rm-dark-theme` from the document body
 // there is also an option to add a simple inverted dark theme
 
-import toggleSimpleCSS from './simple_theme'
+import toggleSimpleCSS, { ensureSimpleCSS } from './simple_theme'
 
 let extensionAPI = null;
 let toggleButton = null;
+let healTimer = null;
+
+// the previous version's unload deleteBlock is fire-and-forget, so an immediate
+// check could see the block just before the delete lands and wrongly mark the
+// device as healed
+const HEAL_DELAY_MS = 3000;
 
 const panelConfig = {
   tabTitle: "Dark Mode Toggle",
@@ -19,7 +25,7 @@ const panelConfig = {
         description: "Adds the CSS for a simple dark mode theme to the [[roam/css]] page",
         action:	  {type:	 "switch",
                       onChange: (evt) => {
-                        toggleSimpleCSS(evt.target.checked);
+                        Promise.resolve(toggleSimpleCSS(evt.target.checked)).catch(console.error);
                         console.log("Switch!", evt.target.checked); }}}
   ]
 };
@@ -122,7 +128,7 @@ function destroyToggle(){
 }
 
 
-function onload({extensionAPI: api}) {
+function onload({extensionAPI: api, extension}) {
   console.log("load dark mode toggle plugin");
 
   // Make extensionAPI accessible globally to the module
@@ -150,11 +156,49 @@ function onload({extensionAPI: api}) {
   } catch (error) {
     console.warn("Dark Mode Toggle: Could not add command palette command:", error);
   }
+
+  healTimer = setTimeout(() => healSimpleTheme(api, extension?.version), HEAL_DELAY_MS);
+}
+
+// One-time restore per device and graph of the simple theme block that an older
+// version's onunload deleted. The version is stored, not compared: after this
+// release nothing deletes the block, so a missing block later means the user
+// removed it, and comparing versions would resurrect hand-deleted blocks on
+// every update. The marker is per-device (localStorage) because a synced marker
+// would let another device's old-version unload delete the block after this
+// device healed.
+async function healSimpleTheme(api, version) {
+  try {
+    const key = `dark-mode-toggle:simple-theme-heal:${window.roamAlphaAPI.graph.name}`;
+    const hasMarker = () => {
+      try { return localStorage.getItem(key) !== null; } catch (e) { return false; }
+    };
+    const writeMarker = (value) => {
+      try { localStorage.setItem(key, value); } catch (e) { /* storage unavailable */ }
+    };
+
+    if (hasMarker()) return;
+
+    if (api.settings.get('add-simple-theme') !== true) {
+      writeMarker('off');
+      return;
+    }
+
+    const r = await ensureSimpleCSS();
+    if (r.present) {
+      writeMarker(String(version ?? '2.0.1'));
+    }
+    if (r.created) {
+      console.info("Dark Mode Toggle: restored the simple theme CSS block removed by a previous version");
+    }
+  } catch (error) {
+    console.error("Dark Mode Toggle: Error restoring simple theme CSS:", error);
+  }
 }
 
 function onunload(){
+  clearTimeout(healTimer);
   destroyToggle();
-  toggleSimpleCSS(false);
   console.log("unload dark mode toggle plugin");
 }
 export default {

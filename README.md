@@ -28,6 +28,7 @@ This extension adds and removes the `.rm-dark-theme` CSS class from the document
 ## Settings
 
 - **Add Simple Dark Theme CSS**: Adds a basic inverted dark theme to your `[[roam/css]]` page
+  - The CSS block stays in your graph when the extension is disabled, updated or uninstalled, so your edits are kept. To remove it, turn this setting off before uninstalling (or delete the "SIMPLE CSS DARK THEME" block from `[[roam/css]]`).
 
 ## Example
 
